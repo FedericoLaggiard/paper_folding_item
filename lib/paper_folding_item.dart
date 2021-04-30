@@ -1,5 +1,7 @@
 library paper_folding_item;
 
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 
 enum FoldingStatus {
@@ -15,6 +17,9 @@ class PaperFoldingItem extends StatelessWidget {
   final Widget outer;
   final Axis? direction;
   final Duration? animationDuration;
+  final double maxHeight;
+  final VoidCallback? onOuterTap;
+  final VoidCallback? onInnerTap;
 
   const PaperFoldingItem({
     Key? key,
@@ -25,6 +30,9 @@ class PaperFoldingItem extends StatelessWidget {
     required this.contentBackgroundColor,
     this.direction,
     this.animationDuration,
+    this.onInnerTap,
+    this.onOuterTap,
+    required this.maxHeight,
   }) : super(key: key);
 
   Tween<double> getTween() {
@@ -167,11 +175,11 @@ class PaperFoldingItem extends StatelessWidget {
           tween: getTween(),
           duration: animationDuration != null ? animationDuration! : Duration(milliseconds: 700),
           builder: (context, data, child) {
-            final double drawerHeight = constraints.maxHeight * contentSizePercent * data;
-            final double portionAngle = 1.57 * (1 - data);
+            final double drawerHeight = maxHeight * contentSizePercent * data;
+            final double portionAngle = 1.50 * (1 - data);
             final double perspective = 0.002 * (1 - data);
             final width = constraints.maxWidth;
-            final height = constraints.maxHeight;
+            final height = maxHeight;
             final Widget drawerContainer = Container(
               width: width,
               height: height * contentSizePercent,
@@ -185,7 +193,16 @@ class PaperFoldingItem extends StatelessWidget {
                 fit: BoxFit.fitWidth,
                 child: Column(
                   children: <Widget>[
+                    // this is the fixed part
+                    Container(
+                      width: width,
+                      child: InkWell(
+                        onTap: () => { if(onInnerTap != null) onInnerTap!()},
+                        child: outer
+                      ),
+                    ),
                     Stack(
+                      clipBehavior: Clip.hardEdge,
                       children: <Widget>[
                         // this is the folded item
                         Container(
@@ -194,12 +211,13 @@ class PaperFoldingItem extends StatelessWidget {
                           width: width,
                         ),
                         // Slice Top
-                        Positioned(
+                        if(data <1.0) ...[Positioned(
                           top: 0,
                           left: 0,
                           child: ClipRect(
+                            clipBehavior: Clip.hardEdge,
                             child: Align(
-                              heightFactor: 0.5 * data,
+                              heightFactor: 0.3 * data,
                               alignment: Alignment.topCenter,
                               child: Transform(
                                   transform: Matrix4.identity()
@@ -223,15 +241,15 @@ class PaperFoldingItem extends StatelessWidget {
                                   )),
                             ),
                           ),
-                        ),
+                        )],
                         // Slice Bottom
-                        Positioned(
+                        if(data <1.0) ...[Positioned(
                           bottom: 0,
                           left: 0,
                           child: ClipRect(
+                            clipBehavior: Clip.hardEdge,
                             child: Align(
                               heightFactor: 0.5 * data,
-                              // widthFactor: width,
                               alignment: Alignment.bottomCenter,
                               child: Transform(
                                   transform: Matrix4.identity()
@@ -241,7 +259,7 @@ class PaperFoldingItem extends StatelessWidget {
                                   child: AbsorbPointer(absorbing: true, child: drawerContainer)),
                             ),
                           ),
-                        ),
+                        )],
                         // if the animation is completed show the content
                         if (data == 1.0) ...[drawerContainer],
                         // else show a shadow
@@ -260,12 +278,6 @@ class PaperFoldingItem extends StatelessWidget {
                         ]
                       ],
                     ),
-                    // this is the fixed part
-                    Container(
-                      width: width,
-                      height: constraints.maxHeight,
-                      child: outer,
-                    )
                   ],
                 ),
               ),

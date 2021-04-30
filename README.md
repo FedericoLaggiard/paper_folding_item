@@ -16,7 +16,7 @@ todo
 
 ## Roadmap
 
-todo
+* enhance vertical folding internal shadow
 
 ## Bugs/Requests
 
