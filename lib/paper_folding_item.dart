@@ -77,6 +77,7 @@ class PaperFoldingItem extends StatelessWidget {
                     Stack(
                       children: <Widget>[
                         Container(
+                          color: Colors.black,
                           width: drawerWidth,
                           height: height,
                         ),
@@ -108,7 +109,24 @@ class PaperFoldingItem extends StatelessWidget {
                                     ..setEntry(3, 0, -perspective)
                                     ..rotateY(portionAngle),
                                   alignment: Alignment.centerRight,
-                                  child: AbsorbPointer(absorbing: true, child: drawerContainer)),
+                                  child: AbsorbPointer(absorbing: true, child:
+                                    Stack(children: [
+                                      drawerContainer,
+                                      // shadow on the right face to enhance 3d effect
+                                      Positioned(
+                                        right: 0,
+                                        child: Opacity(
+                                          opacity: (1-data) * .3,
+                                          child: Container(
+                                            decoration: BoxDecoration(boxShadow: [BoxShadow(color: Colors.black, blurRadius: 1)]),
+                                            width: drawerWidth,
+                                            height: height,
+                                          ),
+                                        ),
+                                      ),
+                                    ])
+                                  )
+                              ),
                             ),
                           ),
                         ),
@@ -192,6 +210,7 @@ class PaperFoldingItem extends StatelessWidget {
                                       absorbing: true,
                                       child: Stack(children: [
                                         drawerContainer,
+                                        // shadow on the top face to enhance 3d effect
                                         Opacity(
                                           opacity: (1-data) * .3,
                                           child: Container(
