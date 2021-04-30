@@ -11,7 +11,6 @@ enum FoldingStatus {
 
 class PaperFoldingItem extends StatelessWidget {
   final FoldingStatus status;
-  final Color contentBackgroundColor;
   final Widget content;
   final double contentSizePercent;
   final Widget outer;
@@ -20,6 +19,7 @@ class PaperFoldingItem extends StatelessWidget {
   final double maxHeight;
   final VoidCallback? onOuterTap;
   final VoidCallback? onInnerTap;
+  final bool showHeadShadow;
 
   const PaperFoldingItem({
     Key? key,
@@ -27,12 +27,12 @@ class PaperFoldingItem extends StatelessWidget {
     required this.content,
     required this.contentSizePercent,
     required this.outer,
-    required this.contentBackgroundColor,
     this.direction,
     this.animationDuration,
     this.onInnerTap,
     this.onOuterTap,
     required this.maxHeight,
+    this.showHeadShadow = true,
   }) : super(key: key);
 
   Tween<double> getTween() {
@@ -76,7 +76,6 @@ class PaperFoldingItem extends StatelessWidget {
             );
             return Container(
               height: height,
-              color: contentBackgroundColor ,
               child: FittedBox(
                 alignment: Alignment.centerLeft,
                 fit: BoxFit.fitHeight,
@@ -187,7 +186,6 @@ class PaperFoldingItem extends StatelessWidget {
             );
             return Container(
               width: width,
-              color: contentBackgroundColor,
               child: FittedBox(
                 alignment: Alignment.topCenter,
                 fit: BoxFit.fitWidth,
@@ -275,8 +273,27 @@ class PaperFoldingItem extends StatelessWidget {
                                   height: 1,
                                 ),
                               )),
-                        ]
-                      ],
+                        ],
+                        if (data > .1 && showHeadShadow) ...[
+                          Positioned(
+                          top: 0,
+                          left: 0,
+                          child: Container(
+                            height: 1,
+                            width: width,
+                            decoration: BoxDecoration(
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black,
+                                    offset: Offset(0.0,1.1),
+                                    spreadRadius: .4,
+                                    blurRadius: 4,
+                                  )
+                                ]
+                            ),
+                          )
+                        )]
+                        ],
                     ),
                   ],
                 ),

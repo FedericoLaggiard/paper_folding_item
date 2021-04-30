@@ -9,11 +9,13 @@ class FolderStatus {
   bool isExpanded;
   String title;
   Color headColor;
+  double? height;
 
   FolderStatus({
     required this.isExpanded,
     required this.title,
     required this.headColor,
+    this.height = 200,
   });
 }
 
@@ -39,7 +41,7 @@ class MyHomePage extends StatefulWidget {
   Axis direction = Axis.horizontal;
   final List<FolderStatus> folders = [
     FolderStatus(isExpanded: false, title: "Number One", headColor: Colors.blue),
-    FolderStatus(isExpanded: false, title: "Number Two", headColor: Colors.purple),
+    FolderStatus(isExpanded: false, title: "Number Two", headColor: Colors.purple, height: 400),
     FolderStatus(isExpanded: false, title: "Number Tree", headColor: Colors.deepOrange),
   ];
 
@@ -49,15 +51,16 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
-  Widget renderFoldContent() {
+  Widget renderFoldContent(FolderStatus folder) {
     return Container(
       color: Colors.amber,
       child: Image.asset('assets/images/1.png'),
     );
   }
 
-  Widget renderFoldTitle() {
+  Widget renderFoldTitle(FolderStatus folder) {
     return Container(
+      color: folder.headColor,
       child: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Center(
@@ -81,13 +84,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 return Container(
                   width: MediaQuery.of(context).size.width,
                   child: PaperFoldingItem(
-                    maxHeight: 200,
+                    maxHeight: widget.folders[index].height!,
                     direction: widget.direction,
-                    contentBackgroundColor: widget.folders[index].headColor,
                     animationDuration: Duration(seconds: 1),
-                    content: renderFoldContent(),
+                    content: renderFoldContent(widget.folders[index]),
                     contentSizePercent: .6,
-                    outer: renderFoldTitle(),
+                    outer: renderFoldTitle(widget.folders[index]),
                     status: widget.folders[index].isExpanded ? FoldingStatus.OPEN : FoldingStatus.CLOSE,
                     onInnerTap: () => {
                       setState(() => widget.folders[index].isExpanded = !widget.folders[index].isExpanded)
