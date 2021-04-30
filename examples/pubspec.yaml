@@ -1,5 +1,5 @@
-name: peek_list_example
-description: Peek list wodget examples
+name: paper_folding_item_example
+description: Paper folding item widget examples
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `pub publish`. This is preferred for private packages.
