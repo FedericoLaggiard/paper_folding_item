@@ -24,6 +24,7 @@ class MyHomePage extends StatefulWidget {
 
   final String title;
   bool? isExpanded;
+  Axis direction = Axis.horizontal;
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -38,21 +39,39 @@ class _MyHomePageState extends State<MyHomePage> {
         appBar: AppBar(
           title: Text(widget.title),
         ),
-        body: PaperFoldingItem(
-          direction: Axis.horizontal,
-          contentBackgroundColor: Colors.deepOrange,
-          animationDuration: Duration(seconds: 1),
-          content: Container(
-            color: Colors.amber,
-            child: Text("drawer"),
-          ),
-          contentSizePercent: .6,
-          outer: Container(
-            child: Text("Content"),
-          ),
-          status: widget.isExpanded! ? FoldingStatus.OPEN : FoldingStatus.CLOSE,
-        ),
+        body: Stack(
+          children: [
+            PaperFoldingItem(
+              direction: widget.direction,
+              contentBackgroundColor: Colors.deepOrange,
+              animationDuration: Duration(seconds: 1),
+              content: Container(
+                color: Colors.amber,
+                child: Text("drawer"),
+              ),
+              contentSizePercent: .6,
+              outer: Container(
+                child: Text("Content"),
+              ),
+              status: widget.isExpanded! ? FoldingStatus.OPEN : FoldingStatus.CLOSE,
+            ),
+            Positioned(
+                bottom: 10,
+                left: 10,
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      widget.direction = widget.direction == Axis.horizontal ? Axis.vertical : Axis.horizontal;
+                    });
+                  },
+                  child: Icon(Icons.arrow_forward),
+                )
+            ),
+          ]),
         floatingActionButton: FloatingActionButton(
+          child: Text("${widget.isExpanded! ? "-" : "+"}", style: TextStyle(fontSize: 20),),
           onPressed: () {
             setState(() {
               widget.isExpanded = widget.isExpanded! == true ? false : true;
